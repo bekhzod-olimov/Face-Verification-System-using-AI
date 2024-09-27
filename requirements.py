@@ -1,3 +1,5 @@
+torch
+torchvision
 face-recognition==1.3.0
 face_recognition_models==0.3.0
 numpy==1.24.4

@@ -1,14 +1,17 @@
 import os, cv2, pickle, face_recognition, numpy as np
 from glob import glob
+from src.anti_spoof_predict import AntiSpoofPredict
+from PIL import Image
 
 
 db_path = "databaza"
 
 class DataBaza:
 
-    def __init__(self, db_path = db_path, db_name = "db.pkl"):
-        self.db_path, self.db_name = db_path, db_name 
+    def __init__(self, db_path = db_path, db_name = "db.pkl", models_path = "antispoofing"):
+        self.db_path, self.db_name, self.models_path = db_path, db_name, models_path
         self.db_full_path = f"{self.db_path}/{self.db_name}"
+        self.model_test = AntiSpoofPredict("-1")
 
     def create_db(self): os.makedirs(self.db_path, exist_ok = True); self.databaza = {}; self.id = 0
         
@@ -75,6 +78,8 @@ class DataBaza:
     
     def read_image(self, rasm_yulagi): return cv2.cvtColor(cv2.imread(rasm_yulagi), cv2.COLOR_BGR2RGB)
 
+    def get_pil_im(self, im_path): return Image.open(im_path).convert("RGB")
+
     def get_info(self, rasm):
 
         yuz_koordinatalari = face_recognition.face_locations(rasm)
@@ -82,6 +87,15 @@ class DataBaza:
 
         return yuz_koordinatalari, yuz_xususiyatlari
 
+    def antispoofing(self, rasm_yulagi, model_path):
+
+        ori_im = self.get_pil_im(rasm_yulagi)
+        image_bbox = self.model_test.get_bbox(np.array(ori_im))
+        x1, y1, x2, y2 = image_bbox
+        ori_im = ori_im.crop((x1, y1, x1+x2, y1+y2))
+
+        return self.model_test.predict(ori_im, model_path)
+    
     def check_db(self, data = {"image": "xodimlar_rasmlari/abbosjon.jpg", "data": [1,2,3,4]}): # data = {"image": "xodimlar_rasmlari/abbosjon.jpg", "data": [1,7,5,8]}
         self.load_db(check = True)
 
@@ -97,6 +111,22 @@ class DataBaza:
         print(idlar)
 
         rasm_yulagi = data["image"]
+
+        soxta_haqiqiy_bashorat = np.zeros((1, 3))
+        
+        models_paths = glob(f"{self.models_path}/*.pth")
+        for idx, model_path in enumerate(models_paths):
+            # if idx == 0: continue
+            soxta_haqiqiy_bashorat += self.antispoofing(rasm_yulagi = rasm_yulagi, model_path = model_path)
+        print(soxta_haqiqiy_bashorat)
+        bashorat = np.argmax(soxta_haqiqiy_bashorat)
+        aniqlilik = soxta_haqiqiy_bashorat[0][bashorat]/2
+        
+        # if bashorat == 1 or bashorat == 2: 
+        if bashorat == 1: 
+            print(f"Rasmdagi insonning yuzi {aniqlilik*100:.2f}% aniqlik bilan HAQIQIY bo'lgani uchun databazadan qidirishni boshlaymiz...")
+        else: print(f"Rasmdagi insonning yuzi {aniqlilik*100:.2f}% aniqlik bilan SOXTA!\n"); print("Bizning tizim HAQIQIY inson yuzinigina taniy oladi.\nNoqulayliklar uchun uzr so'raymiz!")
+        
         
         yuz_koordinatalari, yuz_xususiyatlari = self.get_info(self.read_image(rasm_yulagi))
         yuz_nomlari = []
