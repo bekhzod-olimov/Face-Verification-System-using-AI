@@ -1,14 +1,10 @@
 import os, cv2, pickle, face_recognition, numpy as np
-from glob import glob
+from glob import glob; from PIL import Image
 from src.anti_spoof_predict import AntiSpoofPredict
-from PIL import Image
-
-
-db_path = "databaza"
 
 class DataBaza:
 
-    def __init__(self, db_path = db_path, db_name = "db.pkl", models_path = "antispoofing"):
+    def __init__(self, db_path = "databaza", db_name = "db.pkl", models_path = "antispoofing"):
         self.db_path, self.db_name, self.models_path = db_path, db_name, models_path
         self.db_full_path = f"{self.db_path}/{self.db_name}"
         self.model_test = AntiSpoofPredict("-1")
