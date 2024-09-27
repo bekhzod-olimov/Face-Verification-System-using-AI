@@ -1,3 +1,4 @@
+# Import libraries
 import os, cv2, pickle, face_recognition, numpy as np
 from glob import glob; from PIL import Image
 from src.anti_spoof_predict import AntiSpoofPredict
@@ -9,9 +10,17 @@ class DataBaza:
         self.db_full_path = f"{self.db_path}/{self.db_name}"
         self.model_test = AntiSpoofPredict("-1")
 
+    # Function to create database
     def create_db(self): os.makedirs(self.db_path, exist_ok = True); self.databaza = {}; self.id = 0
         
     def load_db(self, check = False):
+
+        """
+
+        This function loads database.
+        
+        """
+        
         print("Databaza yuklanmoqda, iltimos kuting...")
         with open(self.db_full_path, "rb") as f: self.databaza = pickle.load(f)
         print(f"DBdagi hozirgi id lar -> {self.databaza.keys()}")
