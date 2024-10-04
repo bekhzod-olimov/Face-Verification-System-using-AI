@@ -59,11 +59,8 @@ class AntiSpoofPredict(Detection):
     def predict(self, img, model_path):
         
         img = torchvision.transforms.functional.resize(img, (80, 80))
-        test_transform = trans.Compose([
-            trans.ToTensor()
-        ])
-        img = test_transform(img)
-        img = img.unsqueeze(0).to(self.device)
+        test_transform = trans.Compose([trans.ToTensor()])
+        img = test_transform(img).unsqueeze(0).to(self.device)
         
         self._load_model(model_path)
         self.model.eval()
