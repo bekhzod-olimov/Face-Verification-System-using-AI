@@ -1,19 +1,7 @@
-# -*- coding: utf-8 -*-
-# @Time : 20-6-4 上午9:12
-# @Author : zhuying
-# @Company : Minivision
-# @File : default_config.py
-# @Software : PyCharm
-# --*-- coding: utf-8 --*--
-"""
-default config for training
-"""
-
+# Import libraries
 import torch
-from datetime import datetime
-from easydict import EasyDict
+from datetime import datetime; from easydict import EasyDict
 from src.utility import make_if_not_exist, get_width_height, get_kernel
-
 
 def get_default_config():
     conf = EasyDict()
