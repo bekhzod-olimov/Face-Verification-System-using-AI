@@ -8,13 +8,13 @@ def get_default_config():
 
     # ----------------------training---------------
     conf.lr = 1e-1
-    # [9, 13, 15]
-    conf.milestones = [10, 15, 22]  # down learing rate
+    # down learing rate
+    conf.milestones = [10, 15, 22]  
     conf.gamma = 0.1
     conf.epochs = 25
     conf.momentum = 0.9
     conf.batch_size = 1024
-
+    
     # model
     conf.num_classes = 3
     conf.input_channel = 3
@@ -58,4 +58,5 @@ def update_config(args, conf):
     conf.model_path = snapshot_dir
     conf.log_path = log_path
     conf.job_name = job_name
+    
     return conf
