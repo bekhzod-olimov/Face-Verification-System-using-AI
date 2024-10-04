@@ -1,14 +1,11 @@
+# Import libraries
 import os, cv2, torch, math, torchvision, numpy as np, torch.nn.functional as F
 from glob import glob; from src.data_io import transform as trans
 from src.model_lib.MiniFASNet import MiniFASNetV1, MiniFASNetV2,MiniFASNetV1SE,MiniFASNetV2SE
 from src.utility import get_kernel, parse_model_name
 
-MODEL_MAPPING = {
-    'MiniFASNetV1': MiniFASNetV1,
-    'MiniFASNetV2': MiniFASNetV2,
-    'MiniFASNetV1SE':MiniFASNetV1SE,
-    'MiniFASNetV2SE':MiniFASNetV2SE
-}
+MODEL_MAPPING = {'MiniFASNetV1': MiniFASNetV1,    'MiniFASNetV2': MiniFASNetV2,
+                 'MiniFASNetV1SE':MiniFASNetV1SE, 'MiniFASNetV2SE':MiniFASNetV2SE}
 
 class Detection:
     def __init__(self):
